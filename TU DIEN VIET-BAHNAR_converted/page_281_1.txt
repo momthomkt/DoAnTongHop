@@ -28,4 +28,5 @@ nhân ?ray.
 Liên kết, hợp lại, đồng lòng
 T0guất.
 Liên kết, hợp lại, đồng lòng
-27
+
+2;

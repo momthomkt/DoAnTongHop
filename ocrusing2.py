@@ -157,9 +157,8 @@ os.mkdir(convert_dir)
 
 # custom_oem_psm_config = r'-l vie --oem 3 --psm 6 --nice 2'
 # custom_oem_psm_config = r'-l vie --oem 1 --psm 4 --nice 2'
-custom_oem_psm_config = '-l vie --oem 3 --psm 6'
-# custom_oem_psm_config = '--nice 2'
-# custom_oem_psm_config = r'-l vie'
+# custom_oem_psm_config = '-l vie --oem 3 --psm 6'
+custom_oem_psm_config = '-l vie --oem 1 --psm 4'
 
 for pfile in tqdm(list_pages):
   extractedInformation = pytesseract.image_to_string(Image.open(os.path.join(split_dir, pfile)), config=custom_oem_psm_config)
