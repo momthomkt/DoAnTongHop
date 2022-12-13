@@ -37,9 +37,94 @@ from pdf2image import convert_from_path
 from tqdm import tqdm
 import tempfile
 
+def find_max(lst):
+    max_col = lst[0]
+    index_max = 0
+    for i in range(len(lst)):
+        if lst[i] >= max_col:
+            max_col = lst[i]
+            index_max = i
+    return index_max
+
+# Ham giai he 2 phuong trinh bac 1
+def solver_SOE(x1,y1,x2,y2):
+    if x1 == x2:
+        return [1,x1,0]
+    else:
+        a = (y1 - y2)/(x1 - x2)
+        b = (x1 * y2 - x2 * y1)/(x1 - x2)
+        return [a,b]
+
+# Ham tim hoanh do x(toa do theo phuong ngang) duong ke trang
+def find_Index(vungchon):
+    height = vungchon.shape[0]
+    width = vungchon.shape[1]
+    lst = []
+    for i in range(width):
+        lst.append(0)
+
+
+    for i in range(height):
+        for j in range(width):
+            if (vungchon[i][j] == np.array([255,255,255])).all():
+                lst[j] += 1
+
+    index = find_max(lst)
+    print(index)
+    return index
+
+def split_image(input_dir, output_dir):
+    img = cv2.imread(input_dir)
+
+    y11, y12 = 300, 500
+    # x11, x12 = 393, 867
+    x11, x12 = 393, 827
+
+    y21, y22 = 1090, 1290
+    # x21, x22 = 393, 867
+    x21, x22 = 393, 750
+
+    vungchon1 = img[y11:y12, x11:x12]
+    index1 = find_Index(vungchon1)
+
+    vungchon2 = img[y21:y22, x21:x22]
+    index2 = find_Index(vungchon2)
+
+    result = solver_SOE(index1 + x11,y11, index2 + x21, y22)
+
+    img1 = img.copy()
+    if len(result) == 3:
+        for i in range(img1.shape[0]):
+            for j in range(img1.shape[1]):
+                if j > result[1]:
+                    img1[i][j] = np.array([255,255,255])
+    elif len(result) == 2:
+        for i in range(img1.shape[0]):
+            for j in range(img1.shape[1]):
+                if j > ((i - result[1])/result[0]):
+                    img1[i][j] = np.array([255,255,255])
+    output_dir1 = output_dir + "/" + input_dir[input_dir.rfind('/') + 1:-4] + '_1.jpg'
+    cv2.imwrite(output_dir1,img1)
+
+    img2 = img.copy()
+    if len(result) == 3:
+        for i in range(img2.shape[0]):
+            for j in range(img2.shape[1]):
+                if j <= result[1]:
+                    img2[i][j] = np.array([255,255,255])
+    elif len(result) == 2:
+        for i in range(img2.shape[0]):
+            for j in range(img2.shape[1]):
+                if j <= ((i - result[1])/result[0]):
+                    img2[i][j] = np.array([255,255,255])
+    output_dir2 = output_dir + "/" + input_dir[input_dir.rfind('/') + 1:-4] + '_2.jpg'
+    cv2.imwrite(output_dir2,img2)
+
 dname = fname[:-4]
 # !rm -rf $dname
 # !mkdir $dname
+
+##1. CHuyển từng trang pdf trong từ điển thành ảnh png trong folder "TU DIEN VIET-BAHNAR"-------------------------------------------
 
 # shutil.rmtree(dname)
 # os.mkdir(dname)
@@ -52,93 +137,15 @@ dname = fname[:-4]
 #           # Save pages as images in the pdf
 #         images[i].save(dname + "/page_%03d.jpg"%i, 'JPEG')
 
-##--------------------------------------------------------------------------------
+##End 1--------------------------------------------------------------------------------
 
-# def find_max(lst):
-#     max_col = lst[0]
-#     index_max = 0
-#     for i in range(len(lst)):
-#         if lst[i] >= max_col:
-#             max_col = lst[i]
-#             index_max = i
-#     return index_max
+split_dir = "Split Image"
 
-# # Ham giai he 2 phuong trinh bac 1
-# def solver_SOE(x1,y1,x2,y2):
-#     if x1 == x2:
-#         return [1,x1,0]
-#     else:
-#         a = (y1 - y2)/(x1 - x2)
-#         b = (x1 * y2 - x2 * y1)/(x1 - x2)
-#         return [a,b]
-
-# # Ham tim hoanh do x(toa do theo phuong ngang) duong ke trang
-# def find_Index(vungchon):
-#     height = vungchon.shape[0]
-#     width = vungchon.shape[1]
-#     lst = []
-#     for i in range(width):
-#         lst.append(0)
-
-
-#     for i in range(height):
-#         for j in range(width):
-#             if (vungchon[i][j] == np.array([255,255,255])).all():
-#                 lst[j] += 1
-
-#     index = find_max(lst)
-#     print(index)
-#     return index
-
-# def split_image(input_dir, output_dir):
-#     img = cv2.imread(input_dir)
-
-#     y11, y12 = 300, 500
-#     x11, x12 = 393, 867
-
-#     y21, y22 = 1090, 1290
-#     x21, x22 = 393, 867
-
-#     vungchon1 = img[y11:y12, x11:x12]
-#     index1 = find_Index(vungchon1)
-
-#     vungchon2 = img[y21:y22, x21:x22]
-#     index2 = find_Index(vungchon2)
-
-#     result = solver_SOE(index1 + x11,y11, index2 + x21, y22)
-
-#     img1 = img.copy()
-#     if len(result) == 3:
-#         for i in range(img1.shape[0]):
-#             for j in range(img1.shape[1]):
-#                 if j > result[1]:
-#                     img1[i][j] = np.array([255,255,255])
-#     elif len(result) == 2:
-#         for i in range(img1.shape[0]):
-#             for j in range(img1.shape[1]):
-#                 if j > ((i - result[1])/result[0]):
-#                     img1[i][j] = np.array([255,255,255])
-#     output_dir1 = output_dir + "/" + input_dir[input_dir.rfind('/') + 1:-4] + '_1.jpg'
-#     cv2.imwrite(output_dir1,img1)
-
-#     img2 = img.copy()
-#     if len(result) == 3:
-#         for i in range(img2.shape[0]):
-#             for j in range(img2.shape[1]):
-#                 if j <= result[1]:
-#                     img2[i][j] = np.array([255,255,255])
-#     elif len(result) == 2:
-#         for i in range(img2.shape[0]):
-#             for j in range(img2.shape[1]):
-#                 if j <= ((i - result[1])/result[0]):
-#                     img2[i][j] = np.array([255,255,255])
-#     output_dir2 = output_dir + "/" + input_dir[input_dir.rfind('/') + 1:-4] + '_2.jpg'
-#     cv2.imwrite(output_dir2,img2)
+##2. Chia đôi từng ảnh ------------------------------------------------------------------
 
 # list_pages0 = sorted(os.listdir(dname))
 # print(list_pages0)
-# # split_dir = dname + "_split"
-split_dir = "Split Image"
+# # # # # #split_dir = dname + "_split"
 
 # shutil.rmtree(split_dir)
 # os.mkdir(split_dir)
@@ -146,8 +153,9 @@ split_dir = "Split Image"
 # for pfile in tqdm(list_pages0):
 #     split_image(dname + "/" + pfile, split_dir)
 
-#-------------------------------------------------------------------------
+##End 2-------------------------------------------------------------------------
 
+#3. Đọc các ký tự, chữ cái có trong ảnh----------------------------------------
 list_pages = sorted(os.listdir(split_dir))
 convert_dir = dname + "_converted"
 # !rm -rf $convert_dir
@@ -165,3 +173,5 @@ for pfile in tqdm(list_pages):
 #   extractedInformation = pytesseract.image_to_string(Image.open(os.path.join(dname, pfile)), config=custom_oem_psm_config)
   with open(os.path.join(convert_dir, pfile.replace('jpg', 'txt')), "w", encoding="utf-8") as f:
     f.write(extractedInformation)
+
+## End 3-------------------------------------------------------------------------------------------------------------------------
