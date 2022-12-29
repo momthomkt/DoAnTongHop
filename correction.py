@@ -1,7 +1,7 @@
 import os
 
-inputDir = 'TU DIEN VIET-BAHNAR_converted'
-resultDir = 'result'
+inputDir = 'fix_input'
+resultDir = 'result_correction'
 path = os.listdir(inputDir)
 print(path)
 
