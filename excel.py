@@ -2,7 +2,8 @@ import os
 import xlsxwriter
 from xlsxwriter import Workbook
 path = os.path.abspath(os.getcwd())
-inputdir = "result_correction"
+# inputdir = "result_correction"
+inputdir = "Output_OCR_BinaryImg"
 fix_inputdir = "fix_input"
 Fix = {'7': 'T', 'Ủ': 'Ŭ', 'Ũ': 'Ŭ','Ø':'B','#':'H','?':'D'}
 InHoaViet = ["A", "À", "Á", "Ă", "Ắ", "Ằ", "Â", "Ấ", "Ầ", "B", "C", "D", "Đ", "E", "É", "È", "Ê","Ế","Ề","G", "H","I","Í","Ì",\
@@ -108,7 +109,8 @@ def READ_TXT_WRITE_TO_XLSX(row,row1, worksheet,worksheet1, name):
 
 
 def WRITE_TO_XLSX():
-    workbook = xlsxwriter.Workbook('Output_correct.xlsx')
+    # workbook = xlsxwriter.Workbook('Output_correct.xlsx')
+    workbook = xlsxwriter.Workbook('Output_BinaryImg.xlsx')
     worksheet = workbook.add_worksheet("VIET - BANA")
     worksheet1 = workbook.add_worksheet("BANA")
     row = 0
