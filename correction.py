@@ -12,7 +12,7 @@ for txt in path:
     print(txtFile)
     for original, replace in dict.items():
         txtFile = txtFile.replace(original, replace)
-    
+    # Open resultDir
     with open(resultDir + '/' + txt, 'w', encoding='utf-8') as f:
         f.write(txtFile) 
         
