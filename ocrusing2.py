@@ -37,6 +37,7 @@ from pdf2image import convert_from_path
 from tqdm import tqdm
 import tempfile
 
+# Hàm tìm giá trị lớn nhất của mảng
 def find_max(lst):
     max_col = lst[0]
     index_max = 0
@@ -92,6 +93,7 @@ def split_image(input_dir, output_dir):
 
     result = solver_SOE(index1 + x11,y11, index2 + x21, y22)
 
+    # Lấy ảnh chứa nội dung bên phải, xóa nội dung bên trái
     img1 = img.copy()
     if len(result) == 3:
         for i in range(img1.shape[0]):
@@ -106,6 +108,7 @@ def split_image(input_dir, output_dir):
     output_dir1 = output_dir + "/" + input_dir[input_dir.rfind('/') + 1:-4] + '_1.jpg'
     cv2.imwrite(output_dir1,img1)
 
+    # Lấy ảnh chứa nội dung bên trái, xóa nội dung bên phải
     img2 = img.copy()
     if len(result) == 3:
         for i in range(img2.shape[0]):
@@ -126,16 +129,16 @@ dname = fname[:-4]
 
 ##1. CHuyển từng trang pdf trong từ điển thành ảnh png trong folder "TU DIEN VIET-BAHNAR"-------------------------------------------
 
-# shutil.rmtree(dname)
-# os.mkdir(dname)
+shutil.rmtree(dname)
+os.mkdir(dname)
 
-# # Store Pdf with convert_from_path function
-# with tempfile.TemporaryDirectory() as path:
-#     images = convert_from_path(fname, output_folder=path)
+# Store Pdf with convert_from_path function
+with tempfile.TemporaryDirectory() as path:
+    images = convert_from_path(fname, output_folder=path)
  
-#     for i in tqdm(range(len(images))):
-#           # Save pages as images in the pdf
-#         images[i].save(dname + "/page_%03d.jpg"%i, 'JPEG')
+    for i in tqdm(range(len(images))):
+          # Save pages as images in the pdf
+        images[i].save(dname + "/page_%03d.jpg"%i, 'JPEG')
 
 ##End 1--------------------------------------------------------------------------------
 
@@ -143,15 +146,15 @@ split_dir = "Split Image"
 
 ##2. Chia đôi từng ảnh ------------------------------------------------------------------
 
-# list_pages0 = sorted(os.listdir(dname))
-# print(list_pages0)
-# # # # # #split_dir = dname + "_split"
+list_pages0 = sorted(os.listdir(dname))
+print(list_pages0)
+# # # # #split_dir = dname + "_split"
 
-# shutil.rmtree(split_dir)
-# os.mkdir(split_dir)
+shutil.rmtree(split_dir)
+os.mkdir(split_dir)
 
-# for pfile in tqdm(list_pages0):
-#     split_image(dname + "/" + pfile, split_dir)
+for pfile in tqdm(list_pages0):
+    split_image(dname + "/" + pfile, split_dir)
 
 ##End 2-------------------------------------------------------------------------
 
